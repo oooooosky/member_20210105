@@ -8,8 +8,11 @@ spring:
     url: jdbc:mysql://localhost:3306/springbootclass?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: bootuser
     password: 1234
+  # cache값을 사용하지 않겠다는 의미
+  thymeleaf:
+    cache: false
 
-    # JPA 관련 설정, datasource: 위치와 같은 위치에 작성해줘야함.
+  # JPA 관련 설정, datasource: 위치와 같은 위치에 작성해줘야함.
   jpa:
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     show-sql: true

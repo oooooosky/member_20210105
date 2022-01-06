@@ -39,7 +39,7 @@ public class MemberEntity {
         DTO 클래스 객체를 전달받아 Entity 클래스 필드값으로 세팅하고
         Entity 객체를 리턴하는 메서드 선언
 
-        static 메서드(정적 메서드) : 클래스 메서드, 객체를 만들지 않고도 바로 호출 가능
+        static 메서드(정적 메서드) : 클래스 메서드, 객체를 만들지 않고도 바로 호출 가능 ,.
      */
     public static MemberEntity saveMember(MemberSaveDTO memberSaveDTO) {
         MemberEntity memberEntity = new MemberEntity();

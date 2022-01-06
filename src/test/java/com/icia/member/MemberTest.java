@@ -1,6 +1,7 @@
 package com.icia.member;
 
 import com.icia.member.dto.MemberDetailDTO;
+import com.icia.member.dto.MemberLoginDTO;
 import com.icia.member.dto.MemberSaveDTO;
 import com.icia.member.service.MemberService;
 import org.junit.jupiter.api.DisplayName;
@@ -10,6 +11,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 
 import javax.transaction.Transactional;
+
+import java.util.List;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -67,4 +71,85 @@ public class MemberTest {
         // 좌변과 우변이 같은지 비교해주는 코드
     }
 
+    @Test
+    @Transactional
+    @Rollback
+    @DisplayName("로그인 테스트")
+    public void loginTest() {
+        /*
+            1. 테스트용 회원가입(MemberSaveDTO)
+            2. 로그인용 객체 생성(MemberLoginDTO)
+            1.2 수행할 때 동일한 이메일, 패스워드를 사용하도록 함.
+            3. 로그인 수행
+         */
+        // given
+            // 1. 테스트용 데이터 객체 생성
+//        MemberSaveDTO memberSaveDTO = new MemberSaveDTO("로그인용이메일", "로그인용비밀번호", "로그인용이름");
+//            // 2. 테스트용 데이터를 DB에 저장하고, member_id를 가져옴.
+//        Long memberId = ms.save(memberSaveDTO);
+//            // 3. 로그인용 객체 생성 (DB값과 비교용으로 사용)
+//        MemberLoginDTO memberLoginDTO = new MemberLoginDTO("로그인용이메일", "로그인용비밀번호");
+//        // when
+//            // 1. 위에서 가져온 회원번호를 가지고 회원정보 조회
+//        MemberDetailDTO findMember = ms.findById(memberId);
+//        // then
+//            // 로그인용 객체에 담긴 정보와 조회한 회원정보를 가지고 비교
+//        assertThat(findMember.getMemberEmail()).isEqualTo(memberLoginDTO.getMemberEmail());
+//        assertThat(findMember.getMemberPassword()).isEqualTo(memberLoginDTO.getMemberPassword());
+
+        // 선생님 방법
+        // given
+        final String testMemberEmail = "로그인테스트이메일";
+        final String testMemberPassword = "로그인테스트비밀번호";
+        final String testMemberName = "로그인테스트이름";
+        // 1.
+        MemberSaveDTO memberSaveDTO = new MemberSaveDTO(testMemberEmail, testMemberPassword, testMemberName);
+        ms.save(memberSaveDTO);
+        // when
+        // 2.
+        MemberLoginDTO memberLoginDTO = new MemberLoginDTO(testMemberEmail, testMemberPassword);
+        boolean loginResult = ms.login(memberLoginDTO);
+        // then
+        assertThat(loginResult).isEqualTo(true);
+
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    @DisplayName("회원목록 테스트")
+    public void memberListTest() {
+
+        /*
+            member_table에 아무 데이터가 없는 상태에서
+            3명의 회원을 가입시킨 후 memberList 사이즈를 조회하여 3이면 테스트 통과
+         */
+
+        // 1. 3명의 회원을 가입
+//        for (int i=1; i<=3; i++) {
+//            MemberSaveDTO memberSaveDTO = new MemberSaveDTO("조회이메일"+i, "조회비밀번호"+i, "조회이름"+i);
+//            ms.save(memberSaveDTO);
+//            // 위 코드를 아래 한줄로도 가능
+//            ms.save(new MemberSaveDTO("조회이메일"+i, "조회비밀번호"+i, "조회이름"+i));
+//        }
+
+        // 이런 방식도 존재.
+        // IntStream 방식, -> : Arrow Function(화살표 함수)
+        // IntStream : 숫자를 일정 간격으로 만들어줌. 1,2,3 ....
+        // rangeClosed : 시작과 끝값을 지정해줌. 1부터 3까지 만들어주라.
+        // forEach부분 : for문과 동일
+        IntStream.rangeClosed(1,3).forEach(i -> {
+            ms.save(new MemberSaveDTO("조회이메일"+i, "조회비밀번호"+i, "조회이름"+i));
+        });
+
+        // 2. 목록 요청 및 목록 비교
+//        List<MemberDetailDTO> memberList =  ms.findAll();
+
+        // 3. 목록 비교
+//        assertThat(memberList.size()).isEqualTo(3);
+
+        // 위 2, 3 번을 한줄로 표현
+        assertThat(ms.findAll().size()).isEqualTo(3);
+
+    }
 }
